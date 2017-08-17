@@ -64,10 +64,8 @@ class BinarySearchTree {
    * @return {boolean|TreeNode} False or the node containing the value.
    */
   _contains(value, current = this._root) {
-    let containsValue = false;
-
     if (value === current.value) {
-      containsValue = current;
+      return current;
     }
 
     if (value < current.value && current._left) {
@@ -78,7 +76,7 @@ class BinarySearchTree {
       return this._contains(value, current._right);
     }
 
-    return containsValue;
+    return false;
   }
 
   /**
@@ -91,10 +89,6 @@ class BinarySearchTree {
 
     if (!node) {
       return false;
-    }
-
-    if (!node._parent) {
-      throw new Error('delete() - Illegal operation, not permitted to delete root node.');
     }
 
     if (node._left && node._right) {
