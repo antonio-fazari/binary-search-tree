@@ -1,16 +1,31 @@
 // NPM Dependencies
 const chai = require('chai');
 const { expect } = chai;
+const sinon = require('sinon');
+const sinonChai = require('sinon-chai');
+chai.use(sinonChai);
 
 // Local Dependencies
-const BinarySearchTree = require('../binary-search-tree');
-const TreeNode = require('../tree-node');
+const BinarySearchTree = require('../src/binary-search-tree');
+const TreeNode = require('../src/tree-node');
 
 describe('Binary Search Tree', function() {
+	let sandbox, binarySearchTree;
+
+	before(() => {
+		sandbox = sinon.sandbox.create();
+	});
+
+    beforeEach(() => {
+        binarySearchTree = new BinarySearchTree(5);
+    });
+
+	afterEach(() => {
+		sandbox.restore();
+	});
+
     describe('constructor()', () => {
       it('should create an instance of BST', () => {
-        const binarySearchTree = new BinarySearchTree(5);
-
         expect(binarySearchTree).to.be.an.instanceOf(BinarySearchTree);
       });
 
@@ -22,12 +37,6 @@ describe('Binary Search Tree', function() {
     });
 
     describe('insert()', () => {
-      let binarySearchTree;
-
-      beforeEach(() => {
-        binarySearchTree = new BinarySearchTree(5);
-      });
-
       describe('when inserting a value less than the root value', () => {
         let leftNode;
 
@@ -83,5 +92,89 @@ describe('Binary Search Tree', function() {
           expect(rightNode._right.value).to.equal(9);
         });
       });
+    });
+
+	describe('contains()', () => {
+		beforeEach(() => {
+			binarySearchTree.insert(4);
+			binarySearchTree.insert(3);
+			binarySearchTree.insert(7);
+		});
+
+		describe('when the value exists in the tree', () => {
+			it('should return the current node when the value parameter is equal to the current node value', () => {
+				const treeNode = binarySearchTree.contains(4);
+
+				expect(treeNode).to.exist;
+                expect(treeNode.value).to.equal(4);
+			});
+
+            it('should traverse the tree to find a left node', () => {
+                const treeNode = binarySearchTree.contains(3);
+
+				expect(treeNode).to.exist;
+                expect(treeNode.value).to.equal(3);
+                expect(treeNode._parent).to.exist;
+            });
+
+            it('should traverse the tree to find a right node', () => {
+                const treeNode = binarySearchTree.contains(7);
+
+				expect(treeNode).to.exist;
+                expect(treeNode.value).to.equal(7);
+                expect(treeNode._parent).to.exist;
+            });
+		});
+
+        describe('when the value does not exist in the tree', () => {
+            it('should return a false boolean and not the current node', () => {
+                const treeNode = binarySearchTree.contains(10);
+
+                expect(treeNode).to.be.false;
+            });
+        });
+	});
+
+    describe('delete()', () => {
+        beforeEach(() => {
+            binarySearchTree.insert(4);
+			binarySearchTree.insert(3);
+			binarySearchTree.insert(7);
+        });
+
+        describe('when the node does not exist in the tree', () => {
+            it('should return a false boolean', () => {
+                const wasDeleted = binarySearchTree.delete(8);
+
+                expect(wasDeleted).to.be.false;
+            });
+        });
+
+        describe('when the node exists in the tree', () => {
+            it('should remove the node from the tree', () => {
+                const wasDeleted = binarySearchTree.delete(7);
+
+                expect(wasDeleted).to.be.true;
+                expect(binarySearchTree._root._right).to.not.exist;
+            });
+        });
+    });
+
+    describe('depthFirstSearch()', () => {
+        let callbackStub;
+
+        beforeEach(() => {
+            callbackStub = sandbox.stub();
+            binarySearchTree.insert(4);
+			binarySearchTree.insert(3);
+			binarySearchTree.insert(7);
+            binarySearchTree.depthFirstSearch(callbackStub);
+        });
+
+        describe('when traversing through each tree node', () => {
+            it('should call the passed callback on every node', () => {
+                expect(callbackStub.callCount).to.be.equal(4);
+            });
+        })
     });
 })

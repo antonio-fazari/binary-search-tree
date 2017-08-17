@@ -35,7 +35,9 @@ class BinarySearchTree {
   _insert(value, current = this._root) {
     let insertKey;
 
-    if (value < current.value) {
+    if (value === current.value) {
+      return;
+    } else if (value < current.value) {
       insertKey = '_left';
     } else {
       insertKey = '_right';
@@ -85,7 +87,7 @@ class BinarySearchTree {
    * @return {boolean} True/false depending on whether the node is deleted.
    */
   delete(value) {
-    const node = this.contains(value);
+    const node = this._contains(value);
 
     if (!node) {
       return false;

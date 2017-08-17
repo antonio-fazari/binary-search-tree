@@ -17,7 +17,7 @@ console.log('=== Contains node: ', !!node + '\n');
 
 // Check if the tree contains a node with the value of 33.
 node = binarySearchTree.contains(33);
-console.log('=== Doesn\'t contain node: ', node + '\n');
+console.log('=== Contains node: ', node + '\n');
 
 // Search all nodes in tree and build array.
 const searchedNodes = [];
